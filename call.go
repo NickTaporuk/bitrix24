@@ -12,6 +12,11 @@ type ExtendedBitrix24 struct {
 	webhookURL string
 }
 
+// NewExtendedBitrix24 creates a new instance of ExtendedBitrix24
+func NewExtendedBitrix24(webhookURL string) *ExtendedBitrix24 {
+	return &ExtendedBitrix24{webhookURL: webhookURL}
+}
+
 // CallMethod calls a Bitrix24 API method
 func (bx24 *ExtendedBitrix24) CallMethod(method string, params map[string]string) (map[string]interface{}, error) {
 	// Build the API endpoint URL
