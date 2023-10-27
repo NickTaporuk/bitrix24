@@ -1,6 +1,9 @@
 package api
 
-import "strconv"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 // GetAll calls a Bitrix24 API method that supports pagination and returns all records
 func (bx24 *ExtendedBitrix24) GetAll(method string) ([]map[string]interface{}, error) {
@@ -16,7 +19,12 @@ func (bx24 *ExtendedBitrix24) GetAll(method string) ([]map[string]interface{}, e
 			return nil, err
 		}
 
-		records, ok := result["result"].([]map[string]interface{})
+		respMap := make(map[string]interface{})
+		err = json.Unmarshal(result, &respMap)
+		if err != nil {
+			return nil, err
+		}
+		records, ok := respMap["result"].([]map[string]interface{})
 		if !ok || len(records) == 0 {
 			break
 		}
@@ -24,7 +32,7 @@ func (bx24 *ExtendedBitrix24) GetAll(method string) ([]map[string]interface{}, e
 		allResults = append(allResults, records...)
 
 		// Handle pagination (assuming the API uses a "next" field to indicate there are more records)
-		if next, exists := result["next"].(float64); exists {
+		if next, exists := respMap["next"].(float64); exists {
 			start = int(next)
 		} else {
 			break
