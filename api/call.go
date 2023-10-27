@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -18,7 +17,7 @@ func NewExtendedBitrix24(webhookURL string) *ExtendedBitrix24 {
 }
 
 // CallMethod calls a Bitrix24 API method
-func (bx24 *ExtendedBitrix24) CallMethod(method string, params map[string]string) (map[string]interface{}, error) {
+func (bx24 *ExtendedBitrix24) CallMethod(method string, params map[string]string) ([]byte, error) {
 	// Build the API endpoint URL
 	endpoint := fmt.Sprintf("%s/%s", bx24.webhookURL, method)
 	reqURL, err := url.Parse(endpoint)
@@ -46,10 +45,5 @@ func (bx24 *ExtendedBitrix24) CallMethod(method string, params map[string]string
 		return nil, err
 	}
 
-	var result map[string]interface{}
-	if err := json.Unmarshal(body, &result); err != nil {
-		return nil, err
-	}
-
-	return result, nil
+	return body, nil
 }
